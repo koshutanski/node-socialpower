@@ -4,7 +4,8 @@ var crypto = require("crypto");
 var User = new mongoose.Schema({
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true, select: false },
-  messages: [{ type: mongoose.Schema.Types.ObjectId }]
+  messages: [{ type: mongoose.Schema.Types.ObjectId }],
+  points:   {type:Integer, required: true}
 })
 
 var hashPassword = function(value) {
@@ -36,8 +37,23 @@ User.static("findOneByUsernamePassword", function(username, password, callback) 
 })
 
 User.method("sendMessage", function(message, callback){
-  // ToDo
   
+  if(message.has(message._id))
+  {
+message.save(function(err,message) {
+  if(err) throw err;
+   console.log(message.id);
+});
+}
+
+this.find({ messages:{ $in: [ message.id ]}}, function(err, users){
+users.forEach(function(element,index){
+element.points++;
+});
+});
+this.messages.add(message.id);
+
+// ToDo
   // 1. check is message already stored in DB (has _id property)
   // 1.1 create the message if not stored yet
 
