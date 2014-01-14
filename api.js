@@ -3,6 +3,8 @@ var MongoStore = require('connect-mongo')(express);
 var routes = require('./routes');
 var mongoose = require("mongoose");
 var path = require('path');
+var User = require("../../models/server/User");
+var HighScore = require("../../models/server/HighScore");
 
 module.exports = function(){
   this.app = express();  
@@ -37,6 +39,32 @@ module.exports.prototype.start = function(config, next) {
     routes.mount(app)
     self.server = app.listen( process.env.PORT || config.port || 3000 , next)
   })
+
+
+  var cronJob = require('cron').CronJob;
+var job = new cronJob('00 00 00 * * 1-7', function(){
+    //find player with the highest score
+    //clear all points
+    //save it in the database
+ 
+User.findUsersWithHighScore(function(err, users){
+ if(err) throw err;
+  var date = new Date();
+HighScore.saveHighScoreForTheDay(users,date, function(err, highScore){
+if(err) throw err;
+
+})
+
+})
+
+
+
+  }, function () {
+    // This function is executed when the job stops
+  }, 
+  true /* Start the job right now */,
+);
+
 }
 
 module.exports.prototype.stop = function(next){
@@ -50,5 +78,5 @@ module.exports.prototype.stop = function(next){
 
 if(!module.parent) {
   var api = new module.exports()
-  api.start(require("./config/local.json"))
+  api.start("require("./config/local.json))
 }
