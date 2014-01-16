@@ -62,16 +62,16 @@ User.method("sendMessage", function(message, callback){
   {
 message.save(function(err,message) {
   if(err) callback(err);
-   console.log(message.id);
+   console.log(message._id);
 });
 }
 
 this.find({ messages:{ $in: [ message.id ]}}, function(err, users){
-users.forEach(function(element,index){
-element.points++;
+users.forEach(function(userWithMessage){
+userWithMessage.points++;
 });
 });
-this.messages.add(message.id);
+User.messages.add(message._id);
 callback(message);
 // ToDo
   // 1. check is message already stored in DB (has _id property)

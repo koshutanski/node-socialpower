@@ -51,14 +51,11 @@ User.findUsersWithHighScore(function(err, users){
  if(err) throw err;
   var date = new Date();
 HighScore.saveHighScoreForTheDay(users,date, function(err, highScore){
-if(err) throw err;
+if(err) console.log(err);
 
 })
 
 })
-
-
-
   }, function () {
     // This function is executed when the job stops
   }, 
